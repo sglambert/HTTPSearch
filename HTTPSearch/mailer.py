@@ -3,6 +3,7 @@ import textwrap
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import configuration as config
+from logger import log
 
 
 class Mailer(object):
@@ -36,3 +37,4 @@ class Mailer(object):
         smtpServer.login(self.mail_sender, config.app_password)
         smtpServer.sendmail(self.mail_sender, recipients, msg.as_string())
         smtpServer.quit()
+        log.info("Email sent to %s" % ', '.join(recipients))
