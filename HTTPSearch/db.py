@@ -1,6 +1,9 @@
 import psycopg2
 import configuration as config
+from logger import log
+import pyodbc
 import textwrap
+import traceback
 
 #TODO Add logging
 class Database(object):
@@ -17,10 +20,11 @@ class Database(object):
         return self
 
 
-    def __exit__(self, exc_type):
+    def __exit__(self, exc_type, exc_value, tb):
         if self.cursor is not None:
-            if exc_type:
+            if exc_type is not None:
                 self.rollback()
+                traceback.print_exception(exc_type, exc_value, tb)
             else:
                 self.commit()
         self.close()
@@ -32,8 +36,8 @@ class Database(object):
                                      host=config.db_host,
                                      port=config.db_port,
                                      database=config.db_database)
-        print("PostgreSQL server information")
-        print(self.conn.get_dsn_parameters(), "\n")
+        log.info('Connected to %s database with user %s' % (config.db_database, config.db_user))
+        print(self.conn.encoding)
         self.cursor = self.conn.cursor()
         return self
 
@@ -45,29 +49,32 @@ class Database(object):
         if self.conn is not None:
             self.conn.close()
             self.conn = None
+            log.info("Disconnected from %s database" % config.db_database)
 
 
-    def execute(self, sql):
-        self.cursor.execute(sql)
+    def execute(self, sql, parameters=None):
+        self.cursor.execute(sql, parameters)
 
 
-    def executemany(self, sql):
+    def executemany(self, sql, parameters=None):
         assert self.cursor is not None
-        self.cursor.executemany(sql)
+        self.cursor.executemany(sql, parameters)
 
 
     def commit(self):
         assert self.cursor is not None
         self.conn.commit()
+        log.debug("COMMIT")
 
 
     def rollback(self):
         assert self.cursor is not None
         self.conn.rollback()
+        log.debug("ROLLBACK")
 
-
-    def select_all(self, sql):
-        self.execute(sql)
+    def select_all(self, sql, parameters=None):
+        self.execute(sql, parameters)
+        log.debug(sql)
         return self.cursor.fetchall()
 
 
@@ -98,10 +105,3 @@ class Database(object):
                     break
                 for row in rows:
                     yield row
-
-
-# Simple test case of database connection and retrieving data from a table
-database = Database()
-connection = database.connect()
-sql = textwrap.dedent("SELECT * FROM public.test")
-print(connection.select_all(sql))
