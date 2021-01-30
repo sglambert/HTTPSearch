@@ -1,6 +1,14 @@
 # HTTPSearch Repository
-The code in this repository is based around making HTTP requests to websites and then sending information from the requests to users
+The code in this repository is based around making HTTP requests to websites and then sending information generated from the requests to users.
 
-My partner likes to purchase clothes on a second hand clothing website. Unfortunately, the website does not have functionality to set email alerts when someone has posted something you are looking for. Therefore, I'm creating this little script to make HTTP get requests to the site. I'll then perform execute several regular expressions on the results to find what I want. Finally, any results will be emailed to the user (in this case my partner!). 
+My partner likes to purchase second hand clothing on Depop. Unfortunately, the website does not have functionality to send email alerts when someone has posted something you're looking for. Therefore, I've created this little script to solve this problem.
 
-I would like firstly have this setup for her, but then try and generalise it so it can possibly work on other websites.
+I'm hoping to build on this functionality, clean up the code a bit more, and generalise the program so it can generate data from other websites.
+
+SETUP GUIDE:
+
+There are several things that need to be setup to run this code:
+1) Download and install Python and Postgres.
+2) Setup a gmail account with an app password: https://support.google.com/accounts/answer/185833?hl=en
+3) Fill in and save the details in the configuration file configuration.py.
+4) Schedule the script to run on your machine. For Windows operating systems, I used Windows Task Scheduler. There should be similar tools available for OSX and Linux operating systems.
