@@ -6,8 +6,6 @@ from html import make_html_table
 from mailer import Mailer
 from time import gmtime, strftime
 import configuration as config
-import os
-
 
 database = Database()
 
@@ -49,7 +47,7 @@ with database as db:
             INSERT INTO depop_results 
             (post_title, post_user, post_image, post_url, post_price, script_run) 
             VALUES (%s, %s, %s, %s, %s, %s)
-            ON CONFLICT (post_title, post_user, post_image, post_url, post_price) DO NOTHING
+            ON CONFLICT (post_title, post_user, post_image, post_url) DO NOTHING
         """)
         db.executemany(sql, search_results)
 
